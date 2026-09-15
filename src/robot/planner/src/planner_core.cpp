@@ -56,8 +56,16 @@ bool PlannerCore::planPath(const nav_msgs::msg::OccupancyGrid &map,
   CellIndex start = worldToGrid(map, start_x, start_y);
   CellIndex goal = worldToGrid(map, goal_x, goal_y);
 
-  if (!isValid(map, start) || !isValid(map, goal)) {
-    RCLCPP_WARN(logger_, "Start or goal cell is invalid/occupied");
+  // Goal must be genuinely free. Start is wherever the robot already is —
+  // only refuse if it's truly lethal (fully occupied), not just within
+  // the soft inflation buffer, or the robot can never escape a tight spot.
+  if (!isValid(map, goal)) {
+    RCLCPP_WARN(logger_, "Goal cell is invalid/occupied");
+    return false;
+  }
+  int8_t start_cost = map.data[start.y * map.info.width + start.x];
+  if (start_cost >= 99) {  // only reject if actually inside a solid obstacle
+    RCLCPP_WARN(logger_, "Start cell is lethally occupied");
     return false;
   }
 
