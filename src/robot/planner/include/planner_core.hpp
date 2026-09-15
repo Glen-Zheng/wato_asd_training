@@ -56,13 +56,13 @@ class PlannerCore {
                   double goal_x, double goal_y,
                   std::vector<geometry_msgs::msg::Point> &waypoints);
 
+    bool isValid(const nav_msgs::msg::OccupancyGrid &map, const CellIndex &idx) const;
+    CellIndex worldToGrid(const nav_msgs::msg::OccupancyGrid &map, double x, double y) const;
 
   private:
     rclcpp::Logger logger_;
 
-    CellIndex worldToGrid(const nav_msgs::msg::OccupancyGrid &map, double x, double y) const;
     geometry_msgs::msg::Point gridToWorld(const nav_msgs::msg::OccupancyGrid &map, const CellIndex &idx) const;
-    bool isValid(const nav_msgs::msg::OccupancyGrid &map, const CellIndex &idx) const;
     double heuristic(const CellIndex &a, const CellIndex &b) const;
     std::vector<CellIndex> getNeighbors(const CellIndex &idx) const;    
 };

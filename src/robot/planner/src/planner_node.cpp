@@ -16,12 +16,6 @@ PlannerNode::PlannerNode() : Node("planner"), state_(State::WAITING_FOR_GOAL), p
     std::chrono::milliseconds(500), std::bind(&PlannerNode::timerCallback, this));
 }
 
-void PlannerNode::mapCallback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg) {
-  current_map_ = *msg;
-  if (state_ == State::WAITING_FOR_ROBOT_TO_REACH_GOAL) {
-    planPath();
-  }
-}
 
 void PlannerNode::goalCallback(const geometry_msgs::msg::PointStamped::SharedPtr msg) {
   goal_ = *msg;
@@ -37,13 +31,28 @@ void PlannerNode::odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg) {
 void PlannerNode::timerCallback() {
   if (state_ == State::WAITING_FOR_ROBOT_TO_REACH_GOAL) {
     if (goalReached()) {
-      RCLCPP_INFO(this->get_logger(), "Goal reached!");
       state_ = State::WAITING_FOR_GOAL;
-    } else {
-      RCLCPP_INFO(this->get_logger(), "Replanning due to timeout or progress...");
+    } else if (!currentPathStillValid()) {
       planPath();
     }
   }
+}
+
+void PlannerNode::mapCallback(const nav_msgs::msg::OccupancyGrid::SharedPtr msg) {
+  current_map_ = *msg;
+  if (state_ == State::WAITING_FOR_ROBOT_TO_REACH_GOAL && !currentPathStillValid()) {
+    planPath();
+  }
+}
+
+bool PlannerNode::currentPathStillValid() {
+  if (last_path_.poses.empty()) return false;
+  for (const auto &pose : last_path_.poses) {
+    if (!planner_.isValid(current_map_, planner_.worldToGrid(current_map_, pose.pose.position.x, pose.pose.position.y))) {
+      return false;
+    }
+  }
+  return true;
 }
 
 bool PlannerNode::goalReached() {

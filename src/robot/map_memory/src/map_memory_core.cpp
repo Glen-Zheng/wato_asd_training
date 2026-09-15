@@ -34,8 +34,8 @@ void MapMemoryCore::integrateCostmap(const nav_msgs::msg::OccupancyGrid &local_c
       double global_y = robot_y + local_x * std::sin(robot_yaw) + local_y * std::cos(robot_yaw);
 
       // Global (x, y) -> global grid indices
-      int gx = static_cast<int>((global_x - origin_x_) / resolution_);
-      int gy = static_cast<int>((global_y - origin_y_) / resolution_);
+      int gx = static_cast<int>(std::floor((global_x - origin_x_) / resolution_));
+      int gy = static_cast<int>(std::floor((global_y - origin_y_) / resolution_));
 
       if (gx >= 0 && gx < width_ && gy >= 0 && gy < height_) {
         global_grid_[gy][gx] = value;  // new data overwrites old (known values only)

@@ -12,7 +12,6 @@
 class PlannerNode : public rclcpp::Node {
   public:
     PlannerNode();
-
   private:
     robot::PlannerCore planner_;
 
@@ -25,7 +24,8 @@ class PlannerNode : public rclcpp::Node {
     rclcpp::Subscription<nav_msgs::msg::Odometry>::SharedPtr odom_sub_;
     rclcpp::Publisher<nav_msgs::msg::Path>::SharedPtr path_pub_;
     rclcpp::TimerBase::SharedPtr timer_;
-
+    
+    nav_msgs::msg::Path last_path_;   
     nav_msgs::msg::OccupancyGrid current_map_;
     geometry_msgs::msg::PointStamped goal_;
     geometry_msgs::msg::Pose robot_pose_;
@@ -36,6 +36,7 @@ class PlannerNode : public rclcpp::Node {
     void goalCallback(const geometry_msgs::msg::PointStamped::SharedPtr msg);
     void odomCallback(const nav_msgs::msg::Odometry::SharedPtr msg);
     void timerCallback();
+    bool currentPathStillValid();
 
     bool goalReached();
     void planPath();

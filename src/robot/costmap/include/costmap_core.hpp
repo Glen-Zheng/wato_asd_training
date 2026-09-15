@@ -13,6 +13,7 @@ class CostmapCore {
 
 
     //costmap logic
+    void markFreeRay(int x0, int y0, int x1, int y1);     
     void initializeCostmap();
     void convertToGrid(double range, double angle, int &x_grid, int &y_grid);
     void markObstacle(int x_grid, int y_grid);

@@ -37,9 +37,13 @@ void CostmapNode::laserScanCallback(const sensor_msgs::msg::LaserScan::SharedPtr
     double angle = scan->angle_min + i * scan->angle_increment;
     double range = scan->ranges[i];
 
+    int origin_x, origin_y;
+    costmap_.convertToGrid(0.0, 0.0, origin_x, origin_y);  // robot's own cell
+
     if (range > scan->range_min && range < scan->range_max) {
       int x_grid, y_grid;
       costmap_.convertToGrid(range, angle, x_grid, y_grid);
+      costmap_.markFreeRay(origin_x, origin_y, x_grid, y_grid);
       costmap_.markObstacle(x_grid, y_grid);
     }
   }
