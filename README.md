@@ -10,3 +10,8 @@ These steps are to setup the monorepo to work on your own PC. We utilize docker 
 3. You're all set! You can begin the assignment by visiting the WATonomous Wiki.
 
 Link to Onboarding Assignment: https://wiki.watonomous.ca/
+
+
+
+demo: https://drive.google.com/file/d/1T72CZsoCdlB596D7OmcYs-IIRo31ibLM/view?usp=drive_link 
+
