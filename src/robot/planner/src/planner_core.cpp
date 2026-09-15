@@ -29,7 +29,7 @@ bool PlannerCore::isValid(const nav_msgs::msg::OccupancyGrid &map, const CellInd
   }
   int8_t value = map.data[idx.y * map.info.width + idx.x];
   // Treat unknown (-1) as free/traversable; treat high cost as blocked.
-  return value < 50;
+  return value < 30;
 }
 
 double PlannerCore::heuristic(const CellIndex &a, const CellIndex &b) const {
